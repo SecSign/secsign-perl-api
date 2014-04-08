@@ -1,4 +1,11 @@
 #!/usr/bin/perl -w
+
+#
+# SecSign ID Api in perl.
+#
+# (c) copyright SecSign Technologies Inc.
+#
+
 use strict;
 use warnings;
 
@@ -159,7 +166,7 @@ package SecSignIDApi;
 # all use declaration
 use URI::Escape;
 use WWW::Curl::Easy;
-use constant SCRIPT_REVISION => '$Revision: 1.7 $';
+use constant SCRIPT_REVISION => '$Revision: 1.8 $';
 
 use constant FALSE => 0;
 use constant TRUE  => 1;

@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+#
+# SecSign ID Api example in perl.
+#
+# (c) copyright SecSign Technologies Inc.
+#
 
 use strict;
 use warnings;
