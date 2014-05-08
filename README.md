@@ -18,7 +18,7 @@ This Perl API allows a secure login using a private key on a smart phone running
 
 
 Check out the included example `example.pl` to see how it works or 
-have a look at the how to use tutorial for PHP <https://secsign.com/en/php-integrate-tutorial.html>. The process is exactly the same in perl.
+have a look at the how to use tutorial for PHP <https://www.secsign.com/en/php-integrate-tutorial.html>. The process is exactly the same in perl.
 or visit <https://www.secsign.com> for more informations.
 
 **Files**
