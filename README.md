@@ -27,6 +27,27 @@ or visit <https://www.secsign.com> for more informations.
 * `example.pl` - a small test script
 
 
+**Prerequisites**
+
+To use the SecSign ID perl interface the module `curl` needs to be available. To be more exact, the interface uses thge module `WWW::Curl::Easy`.
+Either you load the CURL module from CPAN <http://search.cpan.org/~szbalint/WWW-Curl-4.17/lib/WWW/Curl.pm> and put it into the local directory from which you will run the perl interface.
+
+Propably after the module was downloaded it needs to be installed. Unzip the package and run following commands:
+
+* `perl Makefile.pl`
+* `make`
+* `make test`
+* `make install`
+
+It is important to do this as superuser or administrator. It is also important to check for the newest Curl module version from CPAN archive. Otherwise there are some side effects on some os.
+
+Or you install the CURL module via CPAN:
+
+* to start the CPAN shell: `sudo perl -MCPAN -e shell`
+* to upgrade and configure CPAN: `sudo perl -MCPAN -e 'install Bundle::CPAN'`
+* to install the module: `sudo perl -MCPAN -e 'install WWW::Curl::Easy'`
+
+
 ===============
 
 SecSign Technologies Inc. official site: <https://www.secsign.com>
