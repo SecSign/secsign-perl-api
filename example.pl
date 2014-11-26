@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: example.pl,v 1.7 2014/05/28 15:10:23 titus Exp $
+# $Id: example.pl,v 1.8 2014/11/26 17:25:15 titus Exp $
 
 #
 # SecSign ID Api example in perl.
@@ -31,9 +31,10 @@ my $secsignid   = "username";
 
 # get auth session
 my $authsession;
+my $authSessionState;
 eval
 {
-    $authsession = $secSignIDApi->requestAuthSession($secsignid, $servicename);
+    $authsession = $secSignIDApi->requestAuthSession($secsignid, $servicename, $serviceaddress);
     print "got auth session '" . $authsession->toString() . "'" . $/;
 } 
 or do 
@@ -48,17 +49,44 @@ if(! defined($authsession)){
     exit();
 }
 
+
+my $noerror = 0;
+
+eval {
+	$authSessionState = $secSignIDApi->getAuthSessionState($authsession);
+} or do {
+	$noerror = 1;
+};
+print "auth session has state $authSessionState$/";
+	
+while($noerror == 0 && ($authSessionState == AuthSession->PENDING || $authSessionState == AuthSession->FETCHED)) {
+
+	# sleep for couple of seconds
+	sleep 5;
+	    
+	eval {
+    	$authSessionState = $secSignIDApi->getAuthSessionState($authsession);
+    } or do {
+		# an exception is thrown using die
+		print "could not check state of auth session for secsign id '" . $secsignid . "' :" . $@ . $/;
+		exit();  
+	};
+	print "auth session has state $authSessionState$/";
+}
+
 eval
 {
-    my $authSessionState = $secSignIDApi->getAuthSessionState($authsession);
-    
-    print "auth session status is: " . $authSessionState . $/;
-    print "pending status is " . AuthSession->PENDING . $/;
-    print "fetched status is " . AuthSession->FETCHED . $/;
-    
+    print "auth session state is: " . $authSessionState . $/;
     if($authSessionState == AuthSession->AUTHENTICATED)
     {
         print "user has accepted the auth session '" . $authsession->getAuthSessionID() . "'." . $/;
+        
+        $secSignIDApi->releaseAuthSession($authsession);
+        print "auth session '" . $authsession->getAuthSessionID() . "' was released." . $/;
+    }
+    elsif($authSessionState == AuthSession->DENIED)
+    {
+        print "user has denied the auth session '" . $authsession->getAuthSessionID() . "'." . $/;
         
         $secSignIDApi->releaseAuthSession($authsession);
         print "auth session '" . $authsession->getAuthSessionID() . "' was released." . $/;

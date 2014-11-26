@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: SecSignIDApi.pm,v 1.10 2014/05/28 15:10:23 titus Exp $
+# $Id: SecSignIDApi.pm,v 1.11 2014/11/26 17:25:14 titus Exp $
 
 #
 # SecSign ID Api in perl.
@@ -52,8 +52,11 @@ use constant INVALID => 8;
 sub new
 {
     my $class = shift;
-    my $self  = bless {}, $class;
- 
+    my $self  = bless {	requestid => "",
+	 					secsignid => "",
+		 				authsessionid => 0,
+ 						service => "",
+ 						serviceaddr => ""}, $class;
     return $self;
 }
 
@@ -134,12 +137,12 @@ sub createAuthSessionFromHash
 {
     my ($self, $hashref) = @_;
     
-    $self->{secsignid}      = $hashref->{'secsignid'};
-    $self->{authsessionid}  = $hashref->{'authsessionid'};
-    $self->{service}        = $hashref->{'service'};
-    $self->{serviceaddr}    = $hashref->{'serviceaddr'};
-    $self->{requestid}      = $hashref->{'requestid'};
-    $self->{icondata}       = $hashref->{'icondata'};
+    $self->{secsignid}      = defined $hashref->{'secsignid'} ? $hashref->{'secsignid'} : "";
+    $self->{authsessionid}  = defined $hashref->{'authsessionid'} ? $hashref->{'authsessionid'} : -1;
+    $self->{service}        = defined $hashref->{'service'} ? $hashref->{'service'} : "";
+    $self->{serviceaddr}    = defined $hashref->{'serviceaddr'} ? $hashref->{'serviceaddr'} : "";
+    $self->{requestid}      = defined $hashref->{'requestid'} ? $hashref->{'requestid'} : -1;
+    $self->{icondata}       = defined $hashref->{'icondata'} ? $hashref->{'icondata'} : "";
     
     return $self;
 }
@@ -162,14 +165,14 @@ sub toString
 #
 # class SecSignIDApi
 # author: SecSign Technologies Inc.
-# version: $Id: SecSignIDApi.pm,v 1.10 2014/05/28 15:10:23 titus Exp $
+# version: $Id: SecSignIDApi.pm,v 1.11 2014/11/26 17:25:14 titus Exp $
 #
 package SecSignIDApi;
 
 # all use declaration
 use URI::Escape;
 use WWW::Curl::Easy;
-use constant SCRIPT_REVISION => '$Revision: 1.10 $';
+use constant SCRIPT_REVISION => '$Revision: 1.11 $';
 
 use constant FALSE => 0;
 use constant TRUE  => 1;
@@ -247,10 +250,10 @@ sub requestAuthSession
     my $response = $self->sendRequest($requestQuery);
     my $responseHash = $self->checkResponse($response, TRUE); # will throw an exception in case of an error
 
-    my $ticket = new MobileAuthTicket();
-    $ticket->createTicketFromHash($responseHash);
+    my $authSession = new AuthSession();
+    $authSession->createAuthSessionFromHash($responseHash);
     
-    return $ticket;
+    return $authSession;
 }
 
 #
@@ -287,7 +290,7 @@ sub cancelAuthSession
     my $requestParameter = {
         'request'       => 'ReqCancelAuthSession', 
         
-        'secsignid'     => $authsession->getSecSignerID(), 
+        'secsignid'     => $authsession->getSecSignID(), 
         'authsessionid' => $authsession->getAuthSessionID(),
         'requestid'     => $authsession->getRequestID()
     };
@@ -312,7 +315,7 @@ sub releaseAuthSession
     my $requestParameter = {
         'request'       => 'ReqReleaseAuthSession', 
         
-        'secsignid'     => $authsession->getSecSignerID(), 
+        'secsignid'     => $authsession->getSecSignID(), 
         'authsessionid' => $authsession->getAuthSessionID(),
         'requestid'     => $authsession->getRequestID()
     };
@@ -441,7 +444,11 @@ sub buildquery
     
     for (keys %$paramsHashRef)
     {
-        $query .= $_ . '=' . uri_escape($paramsHashRef->{$_}) . '&';
+	    if(defined $paramsHashRef->{$_}){
+    	    $query .= $_ . '=' . uri_escape($paramsHashRef->{$_}) . '&';
+	    } else {
+	    	$query .= $_ . '=&';
+	    }
     }
     
     $query .= 'apimethod'. '='. $self->{referer};
