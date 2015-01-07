@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: SecSignIDApi.pm,v 1.11 2014/11/26 17:25:14 titus Exp $
+# $Id: SecSignIDApi.pm,v 1.12 2015/01/06 17:19:56 titus Exp $
 
 #
 # SecSign ID Api in perl.
@@ -165,14 +165,14 @@ sub toString
 #
 # class SecSignIDApi
 # author: SecSign Technologies Inc.
-# version: $Id: SecSignIDApi.pm,v 1.11 2014/11/26 17:25:14 titus Exp $
+# version: $Id: SecSignIDApi.pm,v 1.12 2015/01/06 17:19:56 titus Exp $
 #
 package SecSignIDApi;
 
 # all use declaration
 use URI::Escape;
 use WWW::Curl::Easy;
-use constant SCRIPT_REVISION => '$Revision: 1.11 $';
+use constant SCRIPT_REVISION => '$Revision: 1.12 $';
 
 use constant FALSE => 0;
 use constant TRUE  => 1;
@@ -200,7 +200,8 @@ sub new
     $version =~s/\s+$//; # trim following whitespace
     
     $self->{scriptVersion} = $version;
-    $self->{referer} = $class . "_Perl";
+    #$self->{referer} = $class . "_Perl";
+    $self->{referer} = "SecSignIDApi_Perl";
     $self->{pluginName} = undef;
     $self->{lastResponse} = undef;
     
