@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: SecSignIDApi.pm,v 1.12 2015/01/06 17:19:56 titus Exp $
+# $Id: SecSignIDApi.pm,v 1.13 2015/03/23 14:45:12 titus Exp $
 
 #
 # SecSign ID Api in perl.
@@ -165,14 +165,14 @@ sub toString
 #
 # class SecSignIDApi
 # author: SecSign Technologies Inc.
-# version: $Id: SecSignIDApi.pm,v 1.12 2015/01/06 17:19:56 titus Exp $
+# version: $Id: SecSignIDApi.pm,v 1.13 2015/03/23 14:45:12 titus Exp $
 #
 package SecSignIDApi;
 
 # all use declaration
 use URI::Escape;
 use WWW::Curl::Easy;
-use constant SCRIPT_REVISION => '$Revision: 1.12 $';
+use constant SCRIPT_REVISION => '$Revision: 1.13 $';
 
 use constant FALSE => 0;
 use constant TRUE  => 1;
@@ -443,8 +443,7 @@ sub buildquery
     my ($self, $paramsHashRef) = @_;
     my $query = '';
     
-    for (keys %$paramsHashRef)
-    {
+    for (keys %$paramsHashRef){
 	    if(defined $paramsHashRef->{$_}){
     	    $query .= $_ . '=' . uri_escape($paramsHashRef->{$_}) . '&';
 	    } else {
@@ -452,8 +451,8 @@ sub buildquery
 	    }
     }
     
-    $query .= 'apimethod'. '='. $self->{referer};
-    #$query .= 'scriptversion'. '='. $self->{scriptVersion};
+    $query .= 'apimethod'. '='. uri_escape($self->{referer});
+    #$query .= 'scriptversion'. '='. uri_escape($self->{scriptVersion});
     
     return $query;
 }
